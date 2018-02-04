@@ -2,11 +2,13 @@ package org.sushobh;
 
 import org.sushobh.Models.Person;
 
+import java.util.List;
+
 public class Main {
 
     public static void main(String[] args) {
 
-        Person person = Meercat.createObject(Person.class);
+        List<Person> list = Meercat.createList(Person.class,5);
         print("Hello");
     }
 

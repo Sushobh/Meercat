@@ -3,6 +3,8 @@ package org.sushobh;
 import org.sushobh.Models.Person;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Meercat {
@@ -65,4 +67,11 @@ public class Meercat {
     }
 
 
+    public static <T> List<T> createList(Class<T> personClass, int size) {
+        List<T> listToReturn = new ArrayList<>(size);
+        for(int i = 0;i<size;i++){
+            listToReturn.add(createObject(personClass));
+        }
+        return listToReturn;
+    }
 }
