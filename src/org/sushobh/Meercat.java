@@ -1,8 +1,13 @@
 package org.sushobh;
 
+import org.sushobh.Annotation.AddRandomStuff;
 import org.sushobh.Models.Person;
 
+import java.io.UTFDataFormatException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -64,10 +69,10 @@ public class Meercat {
     }
 
 
-    private static <T> List<T> createList(Class<T> personClass, int size) {
+    private static <T> List<T> createList(Class<T> classToBeCreated, int size) {
         List<T> listToReturn = new ArrayList<>(size);
         for(int i = 0;i<size;i++){
-            listToReturn.add(createObject(personClass));
+            listToReturn.add(createObject(classToBeCreated));
         }
         return listToReturn;
     }
@@ -77,20 +82,30 @@ public class Meercat {
         Class classToBeLoaded = objectToBeLoaded.getClass();
         Field[] fields = classToBeLoaded.getDeclaredFields();
         for(Field field : fields){
-            try {
-                fillField(field,objectToBeLoaded);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+
+            if(field.getDeclaredAnnotation(AddRandomStuff.class)!=null){
+                try {
+                    fillField(field,objectToBeLoaded);
+                } catch (IllegalAccessException e ) {
+                    e.printStackTrace();
+                }
+                catch (ClassNotFoundException e){
+                    e.printStackTrace();
+                }
             }
+
         }
         Main.print("Hello");
     }
 
 
-    private static void fillField(Field field,Object objectToBeLoaded) throws IllegalAccessException {
+    private static void fillField(Field field,Object objectToBeLoaded) throws IllegalAccessException, ClassNotFoundException {
         field.setAccessible(true);
-        if(List.class.isAssignableFrom(field.getDeclaringClass())){
-
+        if(List.class.isAssignableFrom(field.getType())){
+            AddRandomStuff addRandomStuff = field.getAnnotation(AddRandomStuff.class);
+            ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+            Type[] types = parameterizedType.getActualTypeArguments();
+            field.set(objectToBeLoaded,createList(Class.forName(types[0].getTypeName()),addRandomStuff.size()));
         }
         else {
             field.set(objectToBeLoaded,createObject(field.getType()));

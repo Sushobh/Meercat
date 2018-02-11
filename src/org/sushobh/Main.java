@@ -7,19 +7,17 @@ import java.util.List;
 
 public class Main {
 
-    @AddRandomStuff
-    Person person;
-
 
     public static void main(String[] args) {
        Example example = new Example();
+       print("Hello world!");
     }
-
-
 
     public static class Example{
         @AddRandomStuff
         Person person;
+        @AddRandomStuff(size = 40)
+        List<Person> people;
 
         public Example() {
             Meercat.load(this);
