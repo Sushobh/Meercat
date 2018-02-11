@@ -10,14 +10,11 @@ import java.util.Random;
 public class Meercat {
 
 
-    public static <T> T createObject(Class<T> t){
+    private static <T> T createObject(Class<T> t){
         try {
             T object =  t.newInstance();
             return writeRandomData(object);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
             return null;
         }
@@ -67,11 +64,37 @@ public class Meercat {
     }
 
 
-    public static <T> List<T> createList(Class<T> personClass, int size) {
+    private static <T> List<T> createList(Class<T> personClass, int size) {
         List<T> listToReturn = new ArrayList<>(size);
         for(int i = 0;i<size;i++){
             listToReturn.add(createObject(personClass));
         }
         return listToReturn;
     }
+
+
+    public static void load(Object objectToBeLoaded){
+        Class classToBeLoaded = objectToBeLoaded.getClass();
+        Field[] fields = classToBeLoaded.getDeclaredFields();
+        for(Field field : fields){
+            try {
+                fillField(field,objectToBeLoaded);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        Main.print("Hello");
+    }
+
+
+    private static void fillField(Field field,Object objectToBeLoaded) throws IllegalAccessException {
+        field.setAccessible(true);
+        if(List.class.isAssignableFrom(field.getDeclaringClass())){
+
+        }
+        else {
+            field.set(objectToBeLoaded,createObject(field.getType()));
+        }
+    }
+
 }
